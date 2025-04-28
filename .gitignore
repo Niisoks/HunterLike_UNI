@@ -72,3 +72,8 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+HunterLike.zip
+Windows/HunterLike/Content/Paks/HunterLike-Windows.ucas
+Windows/HunterLike/Content/Paks/HunterLike-Windows.pak
+Windows/HunterLike/Content/Paks/global.ucas
+/Windows
