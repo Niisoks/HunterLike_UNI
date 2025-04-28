@@ -20,4 +20,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateVelocity();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsInCombat{ false };
 };

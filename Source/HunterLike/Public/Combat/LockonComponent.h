@@ -7,6 +7,12 @@
 #include "LockonComponent.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnUpdatedTargetSignature,
+	ULockonComponent, OnUpdatedTargetDelegate,
+	AActor*, NewTargetActorRef
+);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HUNTERLIKE_API ULockonComponent : public UActorComponent
 {
@@ -24,6 +30,9 @@ public:
 	// Sets default values for this component's properties
 	ULockonComponent();
 	AActor* CurrentTargetActor;
+
+	UPROPERTY(BlueprintAssignable);
+	FOnUpdatedTargetSignature OnUpdatedTargetDelegate;
 
 protected:
 	// Called when the game starts
