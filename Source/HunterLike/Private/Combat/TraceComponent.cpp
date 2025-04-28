@@ -2,6 +2,8 @@
 
 
 #include "Combat/TraceComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UTraceComponent::UTraceComponent()
@@ -67,12 +69,23 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	) };
 
 
-	if (bHasFoundTargets) {
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("FOUND")
-		)
+	if (bDebugMode) {
+
+		FVector CenterPoint{
+			UKismetMathLibrary::VLerp(
+				StartSocketLocation, EndSocketLocation, 0.5f
+			)
+		};
+
+		UKismetSystemLibrary::DrawDebugBox(
+			GetWorld(),
+			CenterPoint,
+			Box.GetExtent(),
+			bHasFoundTargets ? FLinearColor::Green : FLinearColor::Red,
+			ShapeRotation.Rotator(),
+			1.0f,
+			2.0f
+		);
 	};
 
 	
