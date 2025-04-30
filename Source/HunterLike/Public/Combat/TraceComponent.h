@@ -45,5 +45,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HandleResetAttack();
+
+	UPROPERTY(VisibleAnywhere)
+	bool bIsAttacking{ false };
 		
 };
