@@ -13,12 +13,16 @@ class HUNTERLIKE_API UStatsComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere)
+	double StaminaRegenRate{ 10.0 };
+
 public:	
 	// Sets default values for this component's properties
 	UStatsComponent();
 
 	UPROPERTY(EditAnywhere)
 	TMap<TEnumAsByte<EStat>, float> Stats;
+
 
 protected:
 	// Called when the game starts
@@ -33,5 +37,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ReduceStamina(float Amount);
+
+
+	UFUNCTION(BlueprintCallable)
+	void RegenStamina();
 		
 };
