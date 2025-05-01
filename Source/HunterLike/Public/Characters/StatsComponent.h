@@ -16,6 +16,12 @@ class HUNTERLIKE_API UStatsComponent : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	double StaminaRegenRate{ 10.0 };
 
+	UPROPERTY(VisibleAnywhere)
+	bool bCanRegen{ true };
+
+	UPROPERTY(EditAnywhere)
+	float StaminaDelayDuration{ 2.0f };
+
 public:	
 	// Sets default values for this component's properties
 	UStatsComponent();
@@ -41,5 +47,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RegenStamina();
+
+	UFUNCTION()
+	void EnableRegen();
 		
 };
