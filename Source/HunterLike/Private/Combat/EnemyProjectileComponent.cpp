@@ -32,3 +32,15 @@ void UEnemyProjectileComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 	// ...
 }
 
+void UEnemyProjectileComponent::SpawnProjectile(FName ComponentName, TSubclassOf<AActor> ProjectileClass)
+{
+	USceneComponent* SpawnPointComp{
+		Cast<USceneComponent>(GetOwner()->GetDefaultSubobjectByName(ComponentName))
+	};
+
+	FVector SpawnLocation{ SpawnPointComp->GetComponentLocation() };
+
+	GetWorld()->SpawnActor(ProjectileClass, &SpawnLocation);
+
+}
+
