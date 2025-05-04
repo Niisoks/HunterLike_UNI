@@ -10,6 +10,9 @@ UCLASS()
 class HUNTERLIKE_API AEnemyProjectile : public AActor
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* HitTemplate;
 	
 public:	
 	// Sets default values for this actor's properties
