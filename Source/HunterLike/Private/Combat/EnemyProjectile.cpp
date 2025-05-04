@@ -40,5 +40,21 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 
 	FindComponentByClass<UProjectileMovementComponent>()
 		->StopMovementImmediately();
+
+	FTimerHandle DeathTimerHandle{
+	
+	};
+
+	GetWorldTimerManager().SetTimer(
+		DeathTimerHandle,
+		this,
+		&AEnemyProjectile::DestroyProjectile,
+		0.5f
+	);
+}
+
+void AEnemyProjectile::DestroyProjectile()
+{
+	Destroy();
 }
 
