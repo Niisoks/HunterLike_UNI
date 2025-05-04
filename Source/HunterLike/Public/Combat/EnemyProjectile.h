@@ -13,6 +13,9 @@ class HUNTERLIKE_API AEnemyProjectile : public AActor
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* HitTemplate;
+
+	UPROPERTY(EditAnywhere)
+	float Damage{ 10.0f };
 	
 public:	
 	// Sets default values for this actor's properties
