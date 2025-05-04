@@ -4,6 +4,7 @@
 #include "Combat/EnemyProjectile.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
@@ -51,6 +52,8 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 		&AEnemyProjectile::DestroyProjectile,
 		0.5f
 	);
+
+	FindComponentByClass<USphereComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AEnemyProjectile::DestroyProjectile()
