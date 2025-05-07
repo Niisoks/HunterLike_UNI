@@ -5,6 +5,8 @@
 #include "AIController.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/EEnemyState.h"
 
 EBTNodeResult::Type UBTT_RangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -20,7 +22,12 @@ EBTNodeResult::Type UBTT_RangedAttack::ExecuteTask(UBehaviorTreeComponent& Owner
 
 	if (RandomValue > Threshold) {
 		Threshold = 0.9;
-		UE_LOG(LogTemp, Warning, TEXT("Above threshold"));
+
+		OwnerComp.GetBlackboardComponent()
+			->SetValueAsEnum(
+				TEXT("CurrentState"),
+				EEnemyState::Charge
+			);
 	}
 	else {
 		Threshold -= 0.1;
