@@ -25,5 +25,15 @@ public:
 		UBehaviorTreeComponent& OwnerComp,
 		uint8* NodeMemory
 	) override;
+
+	UBTT_ChargeAttack();
+
+	void ChargeAtPlayer();
 	
+protected:
+	virtual void TickTask(
+		UBehaviorTreeComponent& OwnerComp,
+		uint8* NodeMemory,
+		float DeltaSeconds
+	) override;
 };
