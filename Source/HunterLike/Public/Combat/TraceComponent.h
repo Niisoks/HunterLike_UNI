@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Combat/FTraceSockets.h"
 #include "TraceComponent.generated.h"
 
 
@@ -15,13 +16,16 @@ class HUNTERLIKE_API UTraceComponent : public UActorComponent
 	USkeletalMeshComponent* SkeletalComp;
 
 	UPROPERTY(EditAnywhere)
-	FName Start;
+	TArray<FTraceSockets> Sockets;
 
-	UPROPERTY(EditAnywhere)
-	FName End;
+	//UPROPERTY(EditAnywhere)
+	//FName Start;
 
-	UPROPERTY(EditAnywhere)
-	FName Rotation;
+	//UPROPERTY(EditAnywhere)
+	//FName End;
+
+	//UPROPERTY(EditAnywhere)
+	//FName Rotation;
 
 	UPROPERTY(EditAnywhere)
 	double BoxCollisionLength{ 30.0 };
