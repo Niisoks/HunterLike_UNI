@@ -20,6 +20,9 @@ class HUNTERLIKE_API UBTT_ChargeAttack : public UBTTaskNode
 
 	class UBossAnimInstance* BossAnim;
 
+	UPROPERTY(EditAnywhere)
+	float AcceptableRadius{ 100.0f };
+
 public:
 	virtual EBTNodeResult::Type ExecuteTask(
 		UBehaviorTreeComponent& OwnerComp,
