@@ -23,6 +23,14 @@ class HUNTERLIKE_API UBTT_ChargeAttack : public UBTTaskNode
 	UPROPERTY(EditAnywhere)
 	float AcceptableRadius{ 100.0f };
 
+	FScriptDelegate MoveCompletedDelegate;
+
+	float OriginalWalkSpeed;
+
+	UPROPERTY(EditAnywhere)
+
+	float ChargeWalkSpeed{ 2000.0f };
+
 public:
 	virtual EBTNodeResult::Type ExecuteTask(
 		UBehaviorTreeComponent& OwnerComp,
@@ -32,6 +40,13 @@ public:
 	UBTT_ChargeAttack();
 
 	void ChargeAtPlayer();
+
+	UFUNCTION()
+	void HandleMoveCompleted();
+
+
+	UFUNCTION()
+	void FinishAttackTask();
 	
 protected:
 	virtual void TickTask(
