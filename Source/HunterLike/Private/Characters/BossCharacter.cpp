@@ -70,6 +70,7 @@ void ABossCharacter::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 void ABossCharacter::Attack()
 {
 	CombatComp->RandomAttack();
+	
 }
 
 float ABossCharacter::GetAnimDuration()

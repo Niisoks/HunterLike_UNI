@@ -15,6 +15,9 @@ class HUNTERLIKE_API UBTT_MeleeAttack : public UBTTaskNode
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
+	float MeleeRange{ 1250.0f };
+
+	UPROPERTY(EditAnywhere)
 	float AttackRadius{ 200.0f };
 
 	UPROPERTY(EditAnywhere)
