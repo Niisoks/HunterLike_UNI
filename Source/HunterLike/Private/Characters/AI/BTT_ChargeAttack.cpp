@@ -22,6 +22,8 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
 			TEXT("IsReadyToCharge"), false
 		);
 
+	bIsFinished = false;
+
 	return EBTNodeResult::InProgress;
 }
 
@@ -78,7 +80,7 @@ void UBTT_ChargeAttack::HandleMoveCompleted()
 
 void UBTT_ChargeAttack::FinishAttackTask()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Task finished"));
+	bIsFinished = true;
 }
 
 void UBTT_ChargeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -96,4 +98,12 @@ void UBTT_ChargeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 		ChargeAtPlayer();
 	}
+	if (!bIsFinished) { return; }
+
+	ControllerRef->ReceiveMoveCompleted.Remove(MoveCompletedDelegate);
+
+	FinishLatentTask(
+		OwnerComp,
+		EBTNodeResult::Succeeded
+	);
 }

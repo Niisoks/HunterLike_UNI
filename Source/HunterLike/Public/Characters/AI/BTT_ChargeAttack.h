@@ -31,6 +31,8 @@ class HUNTERLIKE_API UBTT_ChargeAttack : public UBTTaskNode
 
 	float ChargeWalkSpeed{ 2000.0f };
 
+	bool bIsFinished{ false };
+
 public:
 	virtual EBTNodeResult::Type ExecuteTask(
 		UBehaviorTreeComponent& OwnerComp,
