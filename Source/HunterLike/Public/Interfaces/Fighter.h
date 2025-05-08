@@ -24,4 +24,5 @@ class HUNTERLIKE_API IFighter
 public:
 	virtual float GetDamage() { return 0.0f; }
 	virtual void Attack() {}
+	virtual float GetAnimDuration() { return 0.0f; }
 };

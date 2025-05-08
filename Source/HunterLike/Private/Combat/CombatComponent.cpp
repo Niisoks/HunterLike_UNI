@@ -81,7 +81,7 @@ void UCombatComponent::RandomAttack()
 		FMath::RandRange(0, AttackAnimations.Num() - 1)
 	};
 
-	CharacterRef->PlayAnimMontage(AttackAnimations[RandomIndex]);
+	AnimDuration = CharacterRef->PlayAnimMontage(AttackAnimations[RandomIndex]);
 }
 
 
