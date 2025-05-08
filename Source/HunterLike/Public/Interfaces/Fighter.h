@@ -23,4 +23,5 @@ class HUNTERLIKE_API IFighter
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual float GetDamage() { return 0.0f; }
+	virtual void Attack() {}
 };

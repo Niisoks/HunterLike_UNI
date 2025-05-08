@@ -55,5 +55,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HandleResetCombo();
+
+	void RandomAttack();
 		
 };
