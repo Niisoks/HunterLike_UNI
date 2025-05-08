@@ -16,6 +16,11 @@ ABossCharacter::ABossCharacter()
 
 }
 
+float ABossCharacter::GetDamage()
+{
+	return StatsComp->Stats[EStat::Strength];
+}
+
 // Called when the game starts or when spawned
 void ABossCharacter::BeginPlay()
 {

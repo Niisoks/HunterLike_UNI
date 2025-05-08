@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Enemy.h"
+#include "Interfaces/Fighter.h"
 #include "Characters/EEnemyState.h"
 #include "BossCharacter.generated.h"
 
 UCLASS()
-class HUNTERLIKE_API ABossCharacter : public ACharacter, public IEnemy
+class HUNTERLIKE_API ABossCharacter : public ACharacter, public IEnemy, public IFighter
 {
 	GENERATED_BODY()
 
@@ -24,6 +25,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStatsComponent* StatsComp;
+
+	virtual float GetDamage() override;
 
 protected:
 	// Called when the game starts or when spawned
