@@ -60,7 +60,11 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nodeme
 
 	AAIController* AIRef{ OwnerComp.GetAIOwner() };
 
-	if (Distance > MeleeRange) {
+	IFighter* FighterRef{ 
+		Cast<IFighter>(AIRef->GetCharacter())
+	};
+
+	if (Distance > FighterRef->GetMeleeRange()) {
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
 			TEXT("CurrentState"), EEnemyState::Range
 		);

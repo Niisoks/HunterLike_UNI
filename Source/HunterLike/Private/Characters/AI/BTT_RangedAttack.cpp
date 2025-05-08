@@ -7,6 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/EEnemyState.h"
+#include "Interfaces/Fighter.h"
 
 EBTNodeResult::Type UBTT_RangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -20,7 +21,11 @@ EBTNodeResult::Type UBTT_RangedAttack::ExecuteTask(UBehaviorTreeComponent& Owner
 		OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))
 	};
 
-	if (Distance < MeleeRange) {
+	IFighter* FighterRef{
+		Cast<IFighter>(CharacterRef)
+	};
+
+	if (Distance < FighterRef->GetMeleeRange()) {
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::Melee);
 
 		AbortTask(OwnerComp, NodeMemory);
