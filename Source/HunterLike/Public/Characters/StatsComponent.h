@@ -8,6 +8,19 @@
 #include "StatsComponent.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnHealthPercentUpdateSignature,
+	UStatsComponent, OnHealthPercentUpdateDelegate,
+	float, Percentage
+);
+
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnStaminaPercentUpdateSignature,
+	UStatsComponent, OnStaminaPercentUpdateDelegate,
+	float, Percentage
+);
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HUNTERLIKE_API UStatsComponent : public UActorComponent
 {
@@ -28,6 +41,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TMap<TEnumAsByte<EStat>, float> Stats;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthPercentUpdateSignature OnHealthPercentUpdateDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnStaminaPercentUpdateSignature OnStaminaPercentUpdateDelegate;
 
 
 protected:
