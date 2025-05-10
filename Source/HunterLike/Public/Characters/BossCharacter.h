@@ -19,6 +19,11 @@ class HUNTERLIKE_API ABossCharacter : public ACharacter, public IEnemy, public I
 
 	class UBlackboardComponent* BlackboardComp;
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* DeathAnim;
+
+	class AAIController* ControllerRef;
+
 public:
 	// Sets default values for this character's properties
 	ABossCharacter();
@@ -53,5 +58,8 @@ public:
 	
 	UFUNCTION()
 	void HandlePlayerDeath();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleDeath();
 
 };

@@ -7,6 +7,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Combat/CombatComponent.h"
 #include "Characters/MainCharacter.h"
+#include "BrainComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -30,8 +32,9 @@ void ABossCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	ControllerRef = GetController<AAIController>();
 
-	BlackboardComp = GetController<AAIController>()
+	BlackboardComp = ControllerRef
 		->GetBlackboardComponent();
 
 	BlackboardComp->SetValueAsEnum(
@@ -89,6 +92,17 @@ float ABossCharacter::GetMeleeRange()
 
 void ABossCharacter::HandlePlayerDeath()
 {
-	GetController<AAIController>()->GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::GameOver);
+	ControllerRef->GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::GameOver);
+}
+
+void ABossCharacter::HandleDeath()
+{
+	PlayAnimMontage(DeathAnim);
+
+	ControllerRef->GetBrainComponent()
+		->StopLogic("defeated");
+
+	FindComponentByClass<UCapsuleComponent>()
+		->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
