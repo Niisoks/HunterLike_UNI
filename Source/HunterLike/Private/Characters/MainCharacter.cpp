@@ -9,6 +9,7 @@
 #include "Combat/TraceComponent.h"
 #include "Combat/BlockComponent.h"
 #include "Characters/PlayerActionsComponent.h"
+#include "Animations/PlayerAnimInstance.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -35,6 +36,11 @@ void AMainCharacter::EndLockonWithActor(AActor* ActorRef)
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerAnim = Cast<UPlayerAnimInstance>(
+		GetMesh()->GetAnimInstance()
+	);
+
 	
 }
 

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Navigation/PathFollowingComponent.h"
 #include "Characters/AI/BTT_MeleeAttack.h"
+#include "Navigation/PathFollowingComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 #include "Interfaces/Fighter.h"
