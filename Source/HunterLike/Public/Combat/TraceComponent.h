@@ -35,6 +35,10 @@ class HUNTERLIKE_API UTraceComponent : public UActorComponent
 
 	TArray<AActor*> TargetsToIgnore;
 
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* HitParticleTemplate;
+
+
 public:	
 	// Sets default values for this component's properties
 	UTraceComponent();
