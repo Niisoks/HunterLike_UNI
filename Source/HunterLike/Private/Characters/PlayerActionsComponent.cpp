@@ -96,3 +96,8 @@ void UPlayerActionsComponent::FinishRollAnim()
 	bIsRollActive = false;
 }
 
+bool UPlayerActionsComponent::CurrentlyRolling()
+{
+	return bIsRollActive;
+}
+

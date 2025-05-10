@@ -47,7 +47,6 @@ class HUNTERLIKE_API UPlayerActionsComponent : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	float RollCost{ 10.0f };
 
-	bool bIsRollActive{ false };
 
 public:	
 	// Sets default values for this component's properties
@@ -72,6 +71,11 @@ public:
 
 	UFUNCTION()
 	void FinishRollAnim();
+
+	UFUNCTION(BlueprintCallable)
+	bool CurrentlyRolling();
+
+	bool bIsRollActive{ false };
 
 
 protected:
