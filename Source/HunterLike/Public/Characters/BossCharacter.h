@@ -62,4 +62,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandleDeath();
 
+	UFUNCTION()
+	void FinishDeathAnim();
+
 };
