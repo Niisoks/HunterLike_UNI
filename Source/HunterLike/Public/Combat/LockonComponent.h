@@ -34,6 +34,11 @@ public:
 	UPROPERTY(BlueprintAssignable);
 	FOnUpdatedTargetSignature OnUpdatedTargetDelegate;
 
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void EndLockon();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -41,17 +46,12 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void StartLockon(float SphereRadius = 750.0f);
 
-	void EndLockon();
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleLockon(float Radius = 750.0f);
 
 	UPROPERTY(EditAnywhere)
 	double BreakDistance{ 1000.0 };
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 		
 };

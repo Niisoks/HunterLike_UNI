@@ -25,6 +25,12 @@ AMainCharacter::AMainCharacter()
 
 }
 
+void AMainCharacter::EndLockonWithActor(AActor* ActorRef)
+{
+	if (LockonComp->CurrentTargetActor != ActorRef) { return;  }
+	LockonComp->EndLockon();
+}
+
 // Called when the game starts or when spawned
 void AMainCharacter::BeginPlay()
 {

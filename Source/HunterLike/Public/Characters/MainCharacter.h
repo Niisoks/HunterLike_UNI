@@ -38,6 +38,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UPlayerActionsComponent* PlayerActionsComp;
 
+	virtual void EndLockonWithActor(AActor* ActorRef) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
