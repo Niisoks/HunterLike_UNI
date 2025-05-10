@@ -16,6 +16,9 @@ class HUNTERLIKE_API AMainCharacter : public ACharacter, public IMainPlayer, pub
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* DeathAnimMontage;
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* HurtAnimMontage;
+
 public:
 	// Sets default values for this character's properties
 	AMainCharacter();
@@ -63,4 +66,7 @@ public:
 	void HandleDeath();
 
 	virtual bool CanTakeDamage(AActor* Opponent) override;
+
+	UFUNCTION(BlueprintCallable)
+	void PlayHurtAnim();
 };

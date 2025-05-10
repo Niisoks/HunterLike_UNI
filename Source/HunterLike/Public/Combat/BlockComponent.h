@@ -6,6 +6,12 @@
 #include "Components/ActorComponent.h"
 #include "BlockComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnBlockSignature,
+	UBlockComponent, OnBlockDelegate,
+	float, Cost
+);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HUNTERLIKE_API UBlockComponent : public UActorComponent
@@ -15,9 +21,15 @@ class HUNTERLIKE_API UBlockComponent : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	float StaminaCost{ 30.0f };
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* BlockAnimMontage;
+
 public:	
 	// Sets default values for this component's properties
 	UBlockComponent();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnBlockSignature OnBlockDelegate;
 
 protected:
 	// Called when the game starts
