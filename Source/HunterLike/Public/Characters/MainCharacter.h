@@ -13,6 +13,9 @@ class HUNTERLIKE_API AMainCharacter : public ACharacter, public IMainPlayer, pub
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* DeathAnimMontage;
+
 public:
 	// Sets default values for this character's properties
 	AMainCharacter();
@@ -49,5 +52,8 @@ public:
 	virtual float GetDamage() override;
 
 	virtual bool HasEnoughStamina(float Cost) override;
+
+	UFUNCTION(BlueprintCallable)
+	void HandleDeath();
 
 };
