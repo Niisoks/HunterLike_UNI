@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Interfaces/MainPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 // Sets default values for this component's properties
 UCombatComponent::UCombatComponent()
@@ -67,6 +69,8 @@ void UCombatComponent::ComboAttack()
 void UCombatComponent::HandleResetAttack()
 {
 	bCanAttack = true;
+	CharacterRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
 }
 
 void UCombatComponent::HandleResetCombo()
@@ -82,6 +86,45 @@ void UCombatComponent::RandomAttack()
 	};
 
 	AnimDuration = CharacterRef->PlayAnimMontage(AttackAnimations[RandomIndex]);
+}
+
+float UCombatComponent::GetChargeDuration() const
+{
+	if (!bIsCharging) return 0.f;
+
+	return GetWorld()->GetTimeSeconds() - ChargeStartTime;
+}
+
+void UCombatComponent::StartChargeAttack()
+{
+	if (!CharacterRef || bIsCharging) return;
+
+	bIsCharging = true;
+	ChargeStartTime = GetWorld()->GetTimeSeconds();
+
+	CharacterRef->GetCharacterMovement()->DisableMovement();
+	if (ChargeStartMontage)
+	{
+		CharacterRef->PlayAnimMontage(ChargeStartMontage);
+	}
+}
+
+float UCombatComponent::StopChargeAttack()
+{
+	if (!CharacterRef || !bIsCharging) return 0.f;
+
+	bIsCharging = false;
+
+	float Elapsed = GetWorld()->GetTimeSeconds() - ChargeStartTime;
+
+	CharacterRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	if (ChargeReleaseMontage)
+	{
+		CharacterRef->PlayAnimMontage(ChargeReleaseMontage);
+	}
+
+	return Elapsed;
 }
 
 

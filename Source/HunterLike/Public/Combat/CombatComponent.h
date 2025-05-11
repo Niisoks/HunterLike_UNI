@@ -21,6 +21,16 @@ class HUNTERLIKE_API UCombatComponent : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	TArray<UAnimMontage*> AttackAnimations;
 
+	bool bIsCharging = false;
+
+	float ChargeStartTime = 0.f;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* ChargeStartMontage;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* ChargeReleaseMontage;
+
 	ACharacter* CharacterRef;
 
 	UPROPERTY(VisibleAnywhere)
@@ -59,5 +69,14 @@ public:
 	void HandleResetCombo();
 
 	void RandomAttack();
+
+	UFUNCTION(BlueprintCallable)
+	float GetChargeDuration() const;
+
+	UFUNCTION(BlueprintCallable)
+	void StartChargeAttack();
+
+	UFUNCTION(BlueprintCallable)
+	float StopChargeAttack();
 		
 };
