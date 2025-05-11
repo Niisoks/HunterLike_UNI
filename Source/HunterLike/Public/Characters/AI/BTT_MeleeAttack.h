@@ -30,11 +30,28 @@ protected:
 		uint8* Nodememory
 	) override;
 
+	void PlayPreAttackAnimation();
+
 	virtual void TickTask(
 		UBehaviorTreeComponent& OwnerComp,
 		uint8* Nodememory,
 		float DeltaSeconds
 	) override;
+
+
+	FTimerHandle AttackTimerHandle;
+	FTimerHandle PreAttackHandle;
+
+	// Store ref to owner so StartAttack() can access it
+	UBehaviorTreeComponent* OwnerCompRef;
+
+	// Pre-attack delay in seconds
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float PreAttackDelay;
+
+	// Actual attack after delay
+	void StartAttack();
+
 
 public:
 
@@ -42,5 +59,8 @@ public:
 
 	UFUNCTION()
 	void FinishAttackTask();
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UAnimMontage* PreAttackMontage;
 	
 };
