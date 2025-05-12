@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "Characters/MainCharacter.h"
 #include "Combat/CombatComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -36,7 +37,41 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	 UE_LOG(LogTemp, Warning, TEXT("FREEFRAME"));
+
+	if(bWasCharging){ UE_LOG(LogTemp, Warning, TEXT("B WAS"));  }
+
+	if (bIsCharging) { UE_LOG(LogTemp, Warning, TEXT("B IS")); }
+	
+
+	if (bWasCharging)
+	{
+		if (CharacterRef && CharacterRef->IsA(AMainCharacter::StaticClass()))
+		{
+			AMainCharacter* MyChar = Cast<AMainCharacter>(CharacterRef);
+			if (MyChar)
+			{
+				MyChar->DrainStaminaWhileCharging(DeltaTime);
+
+				if (CharacterRef->Implements<UMainPlayer>())
+				{
+					IMainPlayer* IPlayerRef = Cast<IMainPlayer>(CharacterRef);
+					if (IPlayerRef && !IPlayerRef->HasEnoughStamina(1.0f))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Cancelling charge due to low stamina"));
+
+						if (CharacterRef->GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr))
+						{
+							CharacterRef->StopAnimMontage();
+						}
+
+						CharacterRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+						KillCharge();
+					}
+				}
+			}
+		}
+	}
 }
 
 void UCombatComponent::ComboAttack()
@@ -50,6 +85,7 @@ void UCombatComponent::ComboAttack()
 
 	if (!bCanAttack) { return; }
 	bCanAttack = false;
+	KillCharge();
 
 	CharacterRef->PlayAnimMontage(AttackAnimations[ComboCounter]);
 
@@ -97,8 +133,13 @@ float UCombatComponent::GetChargeDuration() const
 
 void UCombatComponent::StartChargeAttack()
 {
-	if (!CharacterRef || bIsCharging) return;
+	if (!bCanAttack || bIsCharging || !CharacterRef)
+	{
+		KillCharge();
+		return;
+	}
 
+	bWasCharging = true;
 	bIsCharging = true;
 	ChargeStartTime = GetWorld()->GetTimeSeconds();
 
@@ -112,19 +153,59 @@ void UCombatComponent::StartChargeAttack()
 float UCombatComponent::StopChargeAttack()
 {
 	if (!CharacterRef || !bIsCharging) return 0.f;
-
-	bIsCharging = false;
-
+	bWasCharging = false;
+	bCanAttack = false;
 	float Elapsed = GetWorld()->GetTimeSeconds() - ChargeStartTime;
-
-	CharacterRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 
 	if (ChargeReleaseMontage)
 	{
-		CharacterRef->PlayAnimMontage(ChargeReleaseMontage);
+		float MontageDuration = CharacterRef->PlayAnimMontage(ChargeReleaseMontage);
+
+		// Broadcast after the montage has finished playing
+		if (MontageDuration > 0.f)
+		{
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(
+				TimerHandle,
+				[this]()
+				{
+					OnChargeAttackFinished.Broadcast();
+					bIsCharging = false;
+					bCanAttack = true;
+				},
+				MontageDuration,
+				false
+			);
+		}
+		else
+		{
+			OnChargeAttackFinished.Broadcast();
+			bIsCharging = false;
+			bCanAttack = true;
+		}
+	}
+	else
+	{
+		OnChargeAttackFinished.Broadcast();
+		bIsCharging = false;
+		bCanAttack = true;
 	}
 
 	return Elapsed;
 }
 
+bool UCombatComponent::GetIsCharging()
+{
+	return bIsCharging;
+}
 
+bool UCombatComponent::GetCanAttack()
+{
+	return bCanAttack;
+}
+
+void UCombatComponent::KillCharge()
+{
+	bIsCharging = false;
+	bWasCharging = false;
+}

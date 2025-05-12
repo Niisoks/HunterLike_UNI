@@ -13,6 +13,8 @@ DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
 );
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChargeAttackFinished);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HUNTERLIKE_API UCombatComponent : public UActorComponent
 {
@@ -22,6 +24,7 @@ class HUNTERLIKE_API UCombatComponent : public UActorComponent
 	TArray<UAnimMontage*> AttackAnimations;
 
 	bool bIsCharging = false;
+	bool bWasCharging = false;
 
 	float ChargeStartTime = 0.f;
 
@@ -48,6 +51,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttackPerformedSignature OnAttackPerformedDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Combat")
+	FOnChargeAttackFinished OnChargeAttackFinished;
 
 	float AnimDuration;
 
@@ -76,7 +82,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartChargeAttack();
 
+	void ExecuteStartChargeAttack();
+
 	UFUNCTION(BlueprintCallable)
 	float StopChargeAttack();
-		
+
+	UFUNCTION(BlueprintCallable)
+	bool GetIsCharging();
+
+	UFUNCTION(BlueprintCallable)
+	bool GetCanAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void KillCharge();
+
+
 };
