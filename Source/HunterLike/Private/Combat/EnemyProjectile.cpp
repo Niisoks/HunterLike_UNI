@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Engine/DamageEvents.h"
+#include "EngineUtils.h"
 
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
@@ -19,6 +20,14 @@ AEnemyProjectile::AEnemyProjectile()
 void AEnemyProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UE_LOG(LogTemp, Warning, TEXT("ScoreManager spawned and BeginPlay called."));
+
+	for (TActorIterator<AAScoreManager> It(GetWorld()); It; ++It)
+	{
+		ScoreManager = *It;
+		break;
+	}
 	
 }
 
@@ -50,7 +59,10 @@ void AEnemyProjectile::HandleBeginOverlap(
 	if (OtherComp->ComponentHasTag("Score"))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit Score Hitbox! Gaining points."));
-		// Give score
+		if (ScoreManager)
+		{
+			ScoreManager->AddScore(100);
+		}
 		return;
 	}
 	else
