@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Characters/EStat.h"
+#include "Interfaces/AScoreManager.h"
 #include "StatsComponent.generated.h"
-
 
 DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
 	FOnHealthPercentUpdateSignature,
@@ -38,6 +38,8 @@ class HUNTERLIKE_API UStatsComponent : public UActorComponent
 
 	UPROPERTY(EditAnywhere)
 	float StaminaDelayDuration{ 2.0f };
+
+	AAScoreManager* ScoreManager = nullptr;
 
 public:	
 	// Sets default values for this component's properties

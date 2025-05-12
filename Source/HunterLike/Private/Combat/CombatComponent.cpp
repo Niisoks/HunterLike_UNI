@@ -144,9 +144,13 @@ void UCombatComponent::StartChargeAttack()
 	ChargeStartTime = GetWorld()->GetTimeSeconds();
 
 	CharacterRef->GetCharacterMovement()->DisableMovement();
-	if (ChargeStartMontage)
+	UAnimInstance* AnimInstance = CharacterRef->GetMesh()->GetAnimInstance();
+	if (AnimInstance && ChargeStartMontage) // Replace with your animation
 	{
-		CharacterRef->PlayAnimMontage(ChargeStartMontage);
+		float FrameTime = 67.0f / 30.0f;
+		// This freezes the character at the first frame of the animation
+		AnimInstance->Montage_Play(ChargeStartMontage, 0.0f);
+		AnimInstance->Montage_SetPosition(ChargeStartMontage, FrameTime); // Set to specific frame
 	}
 }
 

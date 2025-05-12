@@ -142,7 +142,7 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
         if (TargetsToIgnore.Contains(TargetActor)) { continue; }
 
-        TargetActor->TakeDamage(
+        float damageTaken = TargetActor->TakeDamage(
             CharacterDamage,
             TargetAttackedEvent,
             GetOwner()->GetInstigatorController(),

@@ -68,7 +68,7 @@ void AEnemyProjectile::HandleBeginOverlap(
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit normal hitbox. Deal damage."));
-		// Deal damage
+		ScoreManager->AddScore(-100);
 	}
 	
 	FindComponentByClass<UParticleSystemComponent>()

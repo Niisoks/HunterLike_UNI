@@ -5,6 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/Fighter.h"
+#include "EngineUtils.h"
 
 // Sets default values for this component's properties
 UStatsComponent::UStatsComponent()
@@ -21,6 +22,13 @@ UStatsComponent::UStatsComponent()
 void UStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	for (TActorIterator<AAScoreManager> It(GetWorld()); It; ++It)
+	{
+		ScoreManager = *It;
+		UE_LOG(LogTemp, Warning, TEXT("ScoreManager found: %s"), *ScoreManager->GetName());
+		break;
+	}
 
 	// ...
 	
@@ -44,7 +52,10 @@ void UStatsComponent::ReduceHealth(float Amount, AActor* Opponent)
 	float DamageAmount{ Amount };
 
 	if (!FighterRef->CanTakeDamage(Opponent)) {
-		DamageAmount = DamageAmount/3;
+		DamageAmount = DamageAmount / 3;
+	}
+	else if (Stats.Contains(EStat::MaxStamina)) {
+		ScoreManager->AddScore(-100);
 	}
 
 	Stats[EStat::Health] -= DamageAmount;

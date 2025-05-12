@@ -29,4 +29,7 @@ public:
 private:
     UPROPERTY(VisibleAnywhere, Category = "Score")
     int32 Score;
+
+    UPROPERTY(VisibleAnywhere, Category = "Score")
+    int32 Multiplier{ 1 };
 };

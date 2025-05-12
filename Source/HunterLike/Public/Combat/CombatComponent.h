@@ -82,8 +82,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartChargeAttack();
 
-	void ExecuteStartChargeAttack();
-
 	UFUNCTION(BlueprintCallable)
 	float StopChargeAttack();
 
