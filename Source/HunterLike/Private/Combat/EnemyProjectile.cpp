@@ -29,14 +29,36 @@ void AEnemyProjectile::Tick(float DeltaTime)
 
 }
 
-void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
+void AEnemyProjectile::HandleBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
 {
+	if (!OtherActor || !OtherComp)
+		return;
+
 	APawn* PawnRef{
 		Cast<APawn>(OtherActor)
 	};
 
 	if (!PawnRef->IsPlayerControlled()) { return; }
 
+
+	if (OtherComp->ComponentHasTag("Score"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit Score Hitbox! Gaining points."));
+		// Give score
+		return;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit normal hitbox. Deal damage."));
+		// Deal damage
+	}
+	
 	FindComponentByClass<UParticleSystemComponent>()
 		->SetTemplate(HitTemplate);
 
