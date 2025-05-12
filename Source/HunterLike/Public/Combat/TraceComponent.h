@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Combat/FTraceSockets.h"
+#include "Interfaces/AScoreManager.h"
 #include "TraceComponent.generated.h"
 
 
@@ -12,7 +13,7 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HUNTERLIKE_API UTraceComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
+	TSet<UPrimitiveComponent*> HitScoreComponents;
 	USkeletalMeshComponent* SkeletalComp;
 
 	UPROPERTY(EditAnywhere)
@@ -26,6 +27,8 @@ class HUNTERLIKE_API UTraceComponent : public UActorComponent
 
 	//UPROPERTY(EditAnywhere)
 	//FName Rotation;
+
+	AAScoreManager* ScoreManager = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	double BoxCollisionLength{ 30.0 };

@@ -7,6 +7,7 @@
 #include "Interfaces/Fighter.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
+#include "EngineUtils.h"
 
 // Sets default values for this component's properties
 UTraceComponent::UTraceComponent()
@@ -26,118 +27,143 @@ void UTraceComponent::BeginPlay()
 
 	SkeletalComp = GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
 
+	for (TActorIterator<AAScoreManager> It(GetWorld()); It; ++It)
+	{
+		ScoreManager = *It;
+		break;
+	}
+
 	// ...
 	
 }
 
 
 // Called every frame
+// Called every frame
 void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!bIsAttacking) { return; }
+    if (!bIsAttacking) { return; }
 
-	TArray<FHitResult> AllResults;
+    TArray<FHitResult> AllResults;
 
-	for (const FTraceSockets Socket: Sockets) {
-		FVector StartSocketLocation{ SkeletalComp->GetSocketLocation(Socket.Start) };
-		FVector EndSocketLocation{ SkeletalComp->GetSocketLocation(Socket.End) };
-		FQuat ShapeRotation{ SkeletalComp->GetSocketQuaternion(Socket.Rotation) };
+    for (const FTraceSockets Socket : Sockets) {
+        FVector StartSocketLocation{ SkeletalComp->GetSocketLocation(Socket.Start) };
+        FVector EndSocketLocation{ SkeletalComp->GetSocketLocation(Socket.End) };
+        FQuat ShapeRotation{ SkeletalComp->GetSocketQuaternion(Socket.Rotation) };
 
-		TArray<FHitResult> OutResults;
+        TArray<FHitResult> OutResults;
 
-		double WeaponDistance{
-			FVector::Distance(StartSocketLocation, EndSocketLocation)
-		};
+        double WeaponDistance{
+            FVector::Distance(StartSocketLocation, EndSocketLocation)
+        };
 
-		FVector BoxHalfExtent{
-			BoxCollisionLength, BoxCollisionLength, WeaponDistance
-		};
+        FVector BoxHalfExtent{
+            BoxCollisionLength, BoxCollisionLength, WeaponDistance
+        };
 
-		BoxHalfExtent /= 2;
+        BoxHalfExtent /= 2;
 
-		FCollisionShape Box{
-			FCollisionShape::MakeBox(BoxHalfExtent)
-		};
+        FCollisionShape Box{
+            FCollisionShape::MakeBox(BoxHalfExtent)
+        };
 
-		FCollisionQueryParams IgnoreParams{
-			FName {TEXT("Ignore Params")},
-			false,
-			GetOwner()
-		};
-		bool bHasFoundTargets{ GetWorld()->SweepMultiByChannel(
-			OutResults,
-			StartSocketLocation,
-			EndSocketLocation,
-			ShapeRotation,
-			ECollisionChannel::ECC_GameTraceChannel1,
-			Box,
-			IgnoreParams
-		) };
+        FCollisionQueryParams IgnoreParams{
+            FName {TEXT("Ignore Params")},
+            false,
+            GetOwner()
+        };
 
-		for (FHitResult Hit: OutResults) {
-			AllResults.Add(Hit);
-		}
+        bool bHasFoundTargets{ GetWorld()->SweepMultiByChannel(
+            OutResults,
+            StartSocketLocation,
+            EndSocketLocation,
+            ShapeRotation,
+            ECollisionChannel::ECC_GameTraceChannel1,
+            Box,
+            IgnoreParams
+        ) };
 
-		if (bDebugMode) {
+        for (FHitResult Hit : OutResults) {
+            AllResults.Add(Hit);
+        }
 
-			FVector CenterPoint{
-				UKismetMathLibrary::VLerp(
-					StartSocketLocation, EndSocketLocation, 0.5f
-				)
-			};
+        if (bDebugMode) {
+            FVector CenterPoint{
+                UKismetMathLibrary::VLerp(
+                    StartSocketLocation, EndSocketLocation, 0.5f
+                )
+            };
 
-			UKismetSystemLibrary::DrawDebugBox(
-				GetWorld(),
-				CenterPoint,
-				Box.GetExtent(),
-				bHasFoundTargets ? FLinearColor::Green : FLinearColor::Red,
-				ShapeRotation.Rotator(),
-				1.0f,
-				2.0f
-			);
-		};
+            UKismetSystemLibrary::DrawDebugBox(
+                GetWorld(),
+                CenterPoint,
+                Box.GetExtent(),
+                bHasFoundTargets ? FLinearColor::Green : FLinearColor::Red,
+                ShapeRotation.Rotator(),
+                1.0f,
+                2.0f
+            );
+        }
+    }
 
+    if (AllResults.Num() == 0) return;
 
-	}
-	if (AllResults.Num() == 0) return;
+    float CharacterDamage{ 0.0f };
 
-	float CharacterDamage{ 0.0f };
+    IFighter* FighterRef{ Cast<IFighter>(GetOwner()) };
 
-	IFighter* FighterRef{ Cast<IFighter>(GetOwner()) };
+    if (FighterRef) {
+        CharacterDamage = FighterRef->GetDamage();
+    }
 
-	if(FighterRef){
-		CharacterDamage = FighterRef->GetDamage();
-	}
+    FDamageEvent TargetAttackedEvent;
 
-	FDamageEvent TargetAttackedEvent;
+    for (const FHitResult& Hit : AllResults) {
+        AActor* TargetActor{ Hit.GetActor() };
 
-	for (const FHitResult& Hit : AllResults) {
-		AActor* TargetActor{ Hit.GetActor() };
+        UPrimitiveComponent* HitComp = Cast<UPrimitiveComponent>(Hit.Component.Get());
+        if (HitComp && HitComp->ComponentHasTag("Score"))
+        {
+            if (HitScoreComponents.Contains(HitComp)) {
+                // If we've already hit this score component, skip it
+                continue;
+            }
 
-		if (TargetsToIgnore.Contains(TargetActor)) { continue; }
+            if (ScoreManager == nullptr) { continue; }
+            ScoreManager->AddScore(100);
+            UE_LOG(LogTemp, Warning, TEXT("Scored from hitting a Score component!"));
 
-		TargetActor->TakeDamage(
-			CharacterDamage,
-			TargetAttackedEvent,
-			GetOwner()->GetInstigatorController(),
-			GetOwner()
-		);
+            // Add this component to the set to ignore future hits
+            HitScoreComponents.Add(HitComp);
 
-		TargetsToIgnore.AddUnique(TargetActor);
+            continue; // Skip damage
+        }
 
-		UGameplayStatics::SpawnEmitterAtLocation(
-			GetWorld(),
-			HitParticleTemplate,
-			Hit.ImpactPoint
-		);
-	}
-	
+        if (TargetsToIgnore.Contains(TargetActor)) { continue; }
+
+        TargetActor->TakeDamage(
+            CharacterDamage,
+            TargetAttackedEvent,
+            GetOwner()->GetInstigatorController(),
+            GetOwner()
+        );
+
+        TargetsToIgnore.AddUnique(TargetActor);
+
+        UGameplayStatics::SpawnEmitterAtLocation(
+            GetWorld(),
+            HitParticleTemplate,
+            Hit.ImpactPoint
+        );
+    }
 }
+
 
 void UTraceComponent::HandleResetAttack()
 {
 	TargetsToIgnore.Empty();
+    HitScoreComponents.Empty();
 }
 

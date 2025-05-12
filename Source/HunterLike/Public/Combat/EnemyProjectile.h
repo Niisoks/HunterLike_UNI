@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/AScoreManager.h"
 #include "EnemyProjectile.generated.h"
 
 UCLASS()
@@ -16,6 +17,8 @@ class HUNTERLIKE_API AEnemyProjectile : public AActor
 
 	UPROPERTY(EditAnywhere)
 	float Damage{ 10.0f };
+
+	AAScoreManager* ScoreManager = nullptr;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -30,7 +33,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UFUNCTION(BlueprintCallable)
-	void HandleBeginOverlap(AActor* OtherActor);
+	void HandleBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void DestroyProjectile();
