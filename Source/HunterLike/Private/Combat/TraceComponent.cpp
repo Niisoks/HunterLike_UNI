@@ -30,6 +30,7 @@ void UTraceComponent::BeginPlay()
 	for (TActorIterator<AAScoreManager> It(GetWorld()); It; ++It)
 	{
 		ScoreManager = *It;
+        UE_LOG(LogTemp, Warning, TEXT("ScoreManager found: %s"), *ScoreManager->GetName());
 		break;
 	}
 
@@ -127,7 +128,6 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
         if (HitComp && HitComp->ComponentHasTag("Score"))
         {
             if (HitScoreComponents.Contains(HitComp)) {
-                // If we've already hit this score component, skip it
                 continue;
             }
 
@@ -135,7 +135,6 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
             ScoreManager->AddScore(100);
             UE_LOG(LogTemp, Warning, TEXT("Scored from hitting a Score component!"));
 
-            // Add this component to the set to ignore future hits
             HitScoreComponents.Add(HitComp);
 
             continue; // Skip damage
