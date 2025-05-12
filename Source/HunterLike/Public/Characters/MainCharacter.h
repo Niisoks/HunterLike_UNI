@@ -69,4 +69,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DrainStaminaWhileCharging(float DeltaSeconds);
+
+	UFUNCTION(BlueprintCallable)
+	void SetDamage(float Damage);
 };

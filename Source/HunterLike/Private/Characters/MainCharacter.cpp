@@ -93,3 +93,8 @@ void AMainCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShak
 	}
 }
 
+void AMainCharacter::SetDamage(float Damage)
+{
+	StatsComp->Stats[EStat::Strength] = Damage;
+}
+
