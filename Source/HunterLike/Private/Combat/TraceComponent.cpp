@@ -50,14 +50,21 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
     TArray<FHitResult> AllResults;
 
     for (const FTraceSockets Socket : Sockets) {
-        FVector StartSocketLocation{ SkeletalComp->GetSocketLocation(Socket.Start) };
-        FVector EndSocketLocation{ SkeletalComp->GetSocketLocation(Socket.End) };
+        FVector FullStart = SkeletalComp->GetSocketLocation(Socket.Start);
+        FVector FullEnd = SkeletalComp->GetSocketLocation(Socket.End);
+
+        FVector MidPoint = (FullStart + FullEnd) * 0.5f;
+        FVector HalfDirection = (FullEnd - FullStart) * 0.25f; // quarter length in both directions
+
+        FVector TraceStart = MidPoint - HalfDirection;
+        FVector TraceEnd = MidPoint + HalfDirection;
+
         FQuat ShapeRotation{ SkeletalComp->GetSocketQuaternion(Socket.Rotation) };
 
         TArray<FHitResult> OutResults;
 
         double WeaponDistance{
-            FVector::Distance(StartSocketLocation, EndSocketLocation)
+            FVector::Distance(TraceStart, TraceEnd)
         };
 
         FVector BoxHalfExtent{
@@ -78,8 +85,8 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
         bool bHasFoundTargets{ GetWorld()->SweepMultiByChannel(
             OutResults,
-            StartSocketLocation,
-            EndSocketLocation,
+            TraceStart,
+            TraceEnd,
             ShapeRotation,
             ECollisionChannel::ECC_GameTraceChannel1,
             Box,
@@ -93,7 +100,7 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
         if (bDebugMode) {
             FVector CenterPoint{
                 UKismetMathLibrary::VLerp(
-                    StartSocketLocation, EndSocketLocation, 0.5f
+                    TraceStart, TraceEnd, 0.5f
                 )
             };
 
@@ -149,19 +156,31 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
             GetOwner()
         );
 
+        if (HitComp && HitComp->ComponentHasTag("Boss")) {
+            if (damageTaken > 100) {
+                ScoreManager->AddScore(damageTaken);
+            }
+            else {
+                ScoreManager->AddScore(100);
+            }
+        }
+
         TargetsToIgnore.AddUnique(TargetActor);
 
-        UGameplayStatics::SpawnEmitterAtLocation(
-            GetWorld(),
-            HitParticleTemplate,
-            Hit.ImpactPoint
-        );
+        UE_LOG(LogTemp, Warning, TEXT("Damage taken is %f"), damageTaken);
+        if (damageTaken > 0.5f) {
+            UGameplayStatics::SpawnEmitterAtLocation(
+                GetWorld(),
+                HitParticleTemplate,
+                Hit.ImpactPoint
+            );
 
-        UGameplayStatics::PlaySoundAtLocation(
-            GetWorld(),
-            HitSound,           // Ensure this is initialized via Blueprint or constructor
-            Hit.ImpactPoint
-        );
+            UGameplayStatics::PlaySoundAtLocation(
+                GetWorld(),
+                HitSound,           // Ensure this is initialized via Blueprint or constructor
+                Hit.ImpactPoint
+            );
+        }
     }
 }
 

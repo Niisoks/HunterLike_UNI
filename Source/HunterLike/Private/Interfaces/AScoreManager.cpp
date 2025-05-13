@@ -11,7 +11,7 @@ AAScoreManager::AAScoreManager()
 
 void AAScoreManager::AddScore(int32 Amount)
 {
-    if (Amount > 0) { Multiplier += 1; }
+    if (Amount > 0) { Multiplier += Amount / 10; }
     else { Multiplier = 1; }
     Score += Amount * Multiplier;
     OnScoreChanged.Broadcast(Score);

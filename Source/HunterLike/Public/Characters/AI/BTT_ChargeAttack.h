@@ -33,6 +33,8 @@ class HUNTERLIKE_API UBTT_ChargeAttack : public UBTTaskNode
 
 	bool bIsFinished{ false };
 
+	FTimerHandle ChargeTimeoutHandle;
+
 public:
 	virtual EBTNodeResult::Type ExecuteTask(
 		UBehaviorTreeComponent& OwnerComp,

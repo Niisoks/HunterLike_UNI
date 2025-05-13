@@ -64,6 +64,7 @@ void UPlayerActionsComponent::Walk()
 
 void UPlayerActionsComponent::Roll()
 {
+	
 	if (bIsRollActive || !IPlayerRef->HasEnoughStamina(RollCost)) { return; }
 
 	bIsRollActive = true;
@@ -77,7 +78,7 @@ void UPlayerActionsComponent::Roll()
 	};
 
 	FRotator NewRot{ UKismetMathLibrary::MakeRotFromX(Direction) };
-
+	CharacterRef->SetCanBeDamaged(false);
 	CharacterRef->SetActorRotation(NewRot);
 	float Duration{ CharacterRef->PlayAnimMontage(RollAnimMontage) };
 	FTimerHandle RollTimerHandle;
@@ -94,6 +95,7 @@ void UPlayerActionsComponent::Roll()
 void UPlayerActionsComponent::FinishRollAnim()
 {
 	bIsRollActive = false;
+	CharacterRef->SetCanBeDamaged(true);
 }
 
 bool UPlayerActionsComponent::CurrentlyRolling()

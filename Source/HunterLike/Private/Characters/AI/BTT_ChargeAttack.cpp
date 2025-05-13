@@ -59,6 +59,14 @@ void UBTT_ChargeAttack::ChargeAtPlayer()
 
 	CharacterRef->GetCharacterMovement()
 		->MaxWalkSpeed = ChargeWalkSpeed;
+
+	CharacterRef->GetWorldTimerManager().SetTimer(
+		ChargeTimeoutHandle,
+		this,
+		&UBTT_ChargeAttack::HandleMoveCompleted,
+		2.0f, 
+		false
+	);
 }
 
 void UBTT_ChargeAttack::HandleMoveCompleted()
@@ -77,6 +85,8 @@ void UBTT_ChargeAttack::HandleMoveCompleted()
 	);
 
 	CharacterRef->GetCharacterMovement()->MaxWalkSpeed = OriginalWalkSpeed;
+	CharacterRef->GetWorldTimerManager().ClearTimer(ChargeTimeoutHandle);
+
 }
 
 void UBTT_ChargeAttack::FinishAttackTask()
