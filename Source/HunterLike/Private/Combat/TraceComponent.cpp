@@ -156,6 +156,12 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
             HitParticleTemplate,
             Hit.ImpactPoint
         );
+
+        UGameplayStatics::PlaySoundAtLocation(
+            GetWorld(),
+            HitSound,           // Ensure this is initialized via Blueprint or constructor
+            Hit.ImpactPoint
+        );
     }
 }
 

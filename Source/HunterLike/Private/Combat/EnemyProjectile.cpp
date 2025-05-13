@@ -38,7 +38,7 @@ void AEnemyProjectile::Tick(float DeltaTime)
 
 }
 
-void AEnemyProjectile::HandleBeginOverlap(
+bool AEnemyProjectile::HandleBeginOverlap(
 	UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor,
 	UPrimitiveComponent* OtherComp,
@@ -47,13 +47,13 @@ void AEnemyProjectile::HandleBeginOverlap(
 	const FHitResult& SweepResult)
 {
 	if (!OtherActor || !OtherComp)
-		return;
+		return false;
 
 	APawn* PawnRef{
 		Cast<APawn>(OtherActor)
 	};
 
-	if (!PawnRef->IsPlayerControlled()) { return; }
+	if (!PawnRef->IsPlayerControlled()) { return false; }
 
 
 	if (OtherComp->ComponentHasTag("Score"))
@@ -63,7 +63,7 @@ void AEnemyProjectile::HandleBeginOverlap(
 		{
 			ScoreManager->AddScore(100);
 		}
-		return;
+		return false;
 	}
 	else
 	{
@@ -98,6 +98,7 @@ void AEnemyProjectile::HandleBeginOverlap(
 		PawnRef->GetController(),
 		this
 	);
+	return true;
 }
 
 void AEnemyProjectile::DestroyProjectile()
