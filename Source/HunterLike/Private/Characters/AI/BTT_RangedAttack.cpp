@@ -38,7 +38,7 @@ EBTNodeResult::Type UBTT_RangedAttack::ExecuteTask(UBehaviorTreeComponent& Owner
 	double RandomValue{ UKismetMathLibrary::RandomFloat() };
 
 	if (RandomValue > Threshold) {
-		Threshold = 0.9;
+		Threshold = 0.4;
 
 		OwnerComp.GetBlackboardComponent()
 			->SetValueAsEnum(
