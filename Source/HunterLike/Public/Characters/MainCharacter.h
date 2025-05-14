@@ -19,6 +19,9 @@ class HUNTERLIKE_API AMainCharacter : public ACharacter, public IMainPlayer, pub
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* HurtAnimMontage;
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* KnockbackMontage;
+
 public:
 	// Sets default values for this character's properties
 	AMainCharacter();
@@ -40,6 +43,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UPlayerActionsComponent* PlayerActionsComp;
+
 
 	virtual void EndLockonWithActor(AActor* ActorRef) override;
 
@@ -68,11 +72,21 @@ public:
 	virtual bool CanTakeDamage(AActor* Opponent) override;
 
 	UFUNCTION(BlueprintCallable)
-	void PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate);
+	void PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate, AActor* TargetActor, float Power);
+
+	void DisableCharacterControl();
+
+	void EnableCharacterControl();
+
+	UFUNCTION()
+	void OnKnockbackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DrainStaminaWhileCharging(float DeltaSeconds);
 
 	UFUNCTION(BlueprintCallable)
 	void SetDamage(float Damage);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Combat")
+	bool bInKnockback = false;
 };

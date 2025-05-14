@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/MainCharacter.h"
 #include "Combat/CombatComponent.h"
+#include "Characters/MainCharacter.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Interfaces/MainPlayer.h"
@@ -36,8 +36,6 @@ void UCombatComponent::BeginPlay()
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	 UE_LOG(LogTemp, Warning, TEXT("FREEFRAME"));
 
 	if(bWasCharging){ UE_LOG(LogTemp, Warning, TEXT("B WAS"));  }
 

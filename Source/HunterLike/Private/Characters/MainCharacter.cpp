@@ -10,12 +10,14 @@
 #include "Combat/BlockComponent.h"
 #include "Characters/PlayerActionsComponent.h"
 #include "Animations/PlayerAnimInstance.h"
+#include "Animation/AnimInstance.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("Stats Component"));
 	LockonComp = CreateDefaultSubobject<ULockonComponent>(TEXT("Lock On Component"));
@@ -83,13 +85,85 @@ bool AMainCharacter::CanTakeDamage(AActor* Opponent)
 	return true;
 }
 
-void AMainCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate)
+void AMainCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate, AActor* TargetActor, float Power)
 {
-	PlayAnimMontage(HurtAnimMontage);
+	UE_LOG(LogTemp, Warning, TEXT("power: %f"), Power);
+	bool justDoIt = FMath::RandRange(1, 3) == 1;
+	if (PlayerAnim->bIsBlocking || (!justDoIt && Power < 10.0f)) {
+		PlayAnimMontage(HurtAnimMontage);
 
-	if (CameraShakeTemplate) {
-		GetController<APlayerController>()
-			->ClientStartCameraShake(CameraShakeTemplate);
+		if (CameraShakeTemplate) {
+			GetController<APlayerController>()
+				->ClientStartCameraShake(CameraShakeTemplate);
+		}
+	}
+	else {
+		if (KnockbackMontage && PlayerAnim)
+		{
+			FOnMontageEnded MontageEndDelegate;
+			MontageEndDelegate.BindUObject(this, &AMainCharacter::OnKnockbackMontageEnded);
+
+			// Play the montage and bind the callback
+			float Duration = PlayAnimMontage(KnockbackMontage);
+			PlayerAnim->Montage_SetEndDelegate(MontageEndDelegate, KnockbackMontage);
+
+
+			// Shake the camera
+			if (CameraShakeTemplate) {
+				GetController<APlayerController>()->ClientStartCameraShake(CameraShakeTemplate);
+			}
+
+			// Disable player control (but not camera)
+			DisableCharacterControl();
+			if (TargetActor)
+			{
+				FVector LaunchDirection = GetActorLocation() - TargetActor->GetActorLocation();
+				LaunchDirection.Z = 0.f; // Flatten to horizontal
+				LaunchDirection.Normalize();
+
+				float KnockbackStrength = 100.f * Power; // You can tweak this value
+				FVector LaunchVelocity = LaunchDirection * KnockbackStrength + FVector(0, 0, 200.f); // small lift for effect
+
+				LaunchCharacter(LaunchVelocity, true, true); // override XY and Z velocity
+			}
+		}
+	}
+}
+
+void AMainCharacter::OnKnockbackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	EnableCharacterControl();
+}
+
+void AMainCharacter::DisableCharacterControl()
+{
+	
+	APlayerController* PC = GetController<APlayerController>();
+	if (PC)
+	{
+		bInKnockback = true;
+		// Save camera control and only disable movement and actions
+		PC->SetIgnoreMoveInput(true);
+		PC->SetIgnoreLookInput(false); // Allow camera movement
+	}
+	if (PlayerActionsComp)
+	{
+		PlayerActionsComp->SetComponentTickEnabled(false); // Or custom logic to disable actions
+	}
+}
+
+void AMainCharacter::EnableCharacterControl()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		bInKnockback = false;
+		PC->SetIgnoreMoveInput(false);
+		PC->SetIgnoreLookInput(false);
+	}
+	if (PlayerActionsComp)
+	{
+		PlayerActionsComp->SetComponentTickEnabled(true); // Or re-enable logic
 	}
 }
 
