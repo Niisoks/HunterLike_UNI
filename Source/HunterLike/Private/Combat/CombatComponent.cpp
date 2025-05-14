@@ -175,7 +175,7 @@ float UCombatComponent::StopChargeAttack()
 					bIsCharging = false;
 					bCanAttack = true;
 				},
-				MontageDuration,
+				MontageDuration - 0.4f,
 				false
 			);
 		}
