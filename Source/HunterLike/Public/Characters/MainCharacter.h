@@ -22,6 +22,9 @@ class HUNTERLIKE_API AMainCharacter : public ACharacter, public IMainPlayer, pub
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* KnockbackMontage;
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* BigKnockbackMontage;
+
 public:
 	// Sets default values for this character's properties
 	AMainCharacter();

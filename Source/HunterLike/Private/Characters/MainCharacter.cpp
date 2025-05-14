@@ -87,9 +87,7 @@ bool AMainCharacter::CanTakeDamage(AActor* Opponent)
 
 void AMainCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate, AActor* TargetActor, float Power)
 {
-	UE_LOG(LogTemp, Warning, TEXT("power: %f"), Power);
-	bool justDoIt = FMath::RandRange(1, 3) == 1;
-	if (PlayerAnim->bIsBlocking || (!justDoIt && Power < 10.0f)) {
+	if (PlayerAnim->bIsBlocking || Power < 5.0f) {
 		PlayAnimMontage(HurtAnimMontage);
 
 		if (CameraShakeTemplate) {
@@ -100,31 +98,41 @@ void AMainCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShak
 	else {
 		if (KnockbackMontage && PlayerAnim)
 		{
+			bool bigHit = (Power >= 5.0f && FMath::RandRange(1, 2) == 1);
 			FOnMontageEnded MontageEndDelegate;
 			MontageEndDelegate.BindUObject(this, &AMainCharacter::OnKnockbackMontageEnded);
 
-			// Play the montage and bind the callback
-			float Duration = PlayAnimMontage(KnockbackMontage);
-			PlayerAnim->Montage_SetEndDelegate(MontageEndDelegate, KnockbackMontage);
+			UAnimMontage* knockbackMontage = KnockbackMontage;
+			if (bigHit) { knockbackMontage = BigKnockbackMontage;}
+			
+			float Duration = PlayAnimMontage(knockbackMontage);
+			PlayerAnim->Montage_SetEndDelegate(MontageEndDelegate, knockbackMontage);
 
 
-			// Shake the camera
+			
 			if (CameraShakeTemplate) {
 				GetController<APlayerController>()->ClientStartCameraShake(CameraShakeTemplate);
 			}
 
-			// Disable player control (but not camera)
 			DisableCharacterControl();
 			if (TargetActor)
 			{
+				FVector DirectionToTarget = TargetActor->GetActorLocation() - GetActorLocation();
+				DirectionToTarget.Z = 0; 
+				FRotator NewRotation = DirectionToTarget.Rotation();
+				SetActorRotation(NewRotation);
 				FVector LaunchDirection = GetActorLocation() - TargetActor->GetActorLocation();
-				LaunchDirection.Z = 0.f; // Flatten to horizontal
+				LaunchDirection.Z = 0.f; 
 				LaunchDirection.Normalize();
 
-				float KnockbackStrength = 100.f * Power; // You can tweak this value
-				FVector LaunchVelocity = LaunchDirection * KnockbackStrength + FVector(0, 0, 200.f); // small lift for effect
+				float KnockbackStrength = 100.f * Power; 
+				FVector LaunchVelocity = LaunchDirection * KnockbackStrength + FVector(0, 0, 200.f); 
 
-				LaunchCharacter(LaunchVelocity, true, true); // override XY and Z velocity
+				if (bigHit) {
+					KnockbackStrength = 200.f * Power;
+					LaunchVelocity = LaunchDirection * KnockbackStrength + FVector(0, 0, 400.f);
+				}
+				LaunchCharacter(LaunchVelocity, true, true); 
 			}
 		}
 	}
