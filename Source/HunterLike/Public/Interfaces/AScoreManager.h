@@ -5,6 +5,7 @@
 #include "AScoreManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int32, NewScore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShowScore, int32, CurrentScore);
 
 UCLASS()
 class HUNTERLIKE_API AAScoreManager : public AActor
@@ -17,6 +18,12 @@ public:
     // Add to score
     UFUNCTION(BlueprintCallable, Category = "Score")
     void AddScore(int32 Amount);
+
+    UFUNCTION(BlueprintCallable)
+    int32 ShowScore();
+
+    UPROPERTY(BlueprintAssignable, Category = "Score")
+    FOnShowScore OnShowScore;
 
     // Get current score
     UFUNCTION(BlueprintPure, Category = "Score")

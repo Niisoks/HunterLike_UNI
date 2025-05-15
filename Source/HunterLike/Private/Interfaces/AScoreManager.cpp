@@ -17,3 +17,8 @@ void AAScoreManager::AddScore(int32 Amount)
     OnScoreChanged.Broadcast(Score);
 }
 
+int AAScoreManager::ShowScore()
+{
+    OnShowScore.Broadcast(Score);
+    return Score;
+}
