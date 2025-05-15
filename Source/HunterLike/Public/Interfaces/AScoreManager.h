@@ -33,6 +33,9 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnScoreChanged OnScoreChanged;
 
+    UFUNCTION(BlueprintCallable, Category = "Score")
+    int32 GetMultiplier();
+
 private:
     UPROPERTY(VisibleAnywhere, Category = "Score")
     int32 Score;

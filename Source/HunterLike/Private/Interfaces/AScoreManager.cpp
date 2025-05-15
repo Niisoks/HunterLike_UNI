@@ -22,3 +22,8 @@ int AAScoreManager::ShowScore()
     OnShowScore.Broadcast(Score);
     return Score;
 }
+
+int32 AAScoreManager::GetMultiplier()
+{
+    return Multiplier;
+}
