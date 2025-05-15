@@ -90,6 +90,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetDamage(float Damage);
 
+	UFUNCTION(BlueprintCallable)
+	bool HandleSheath();
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Combat")
 	bool bInKnockback = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Combat")
+	bool bIsSheathed = true;
 };

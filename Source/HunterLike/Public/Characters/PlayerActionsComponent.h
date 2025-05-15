@@ -19,6 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
 	float, Cost
 );
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSheatheStateChanged);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -39,13 +40,20 @@ class HUNTERLIKE_API UPlayerActionsComponent : public UActorComponent
 	float SprintSpeed{ 1000.0f };
 
 	UPROPERTY(EditAnywhere)
-	float WalkSpeed{ 500.0f };
+	float WalkSpeed{ 400.0f };
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* RollAnimMontage;
 
 	UPROPERTY(EditAnywhere)
 	float RollCost{ 10.0f };
+
+	UPROPERTY(EditDefaultsOnly)
+	float SheathedSpeedMultiplier = 1.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float UnsheathedSpeedMultiplier = 0.6f;
+
 
 
 public:	
@@ -77,9 +85,20 @@ public:
 
 	bool bIsRollActive{ false };
 
+	UFUNCTION(BlueprintCallable)
+	void ToggleWeaponState();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnSheatheStateChanged OnWeaponSheathed;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnSheatheStateChanged OnWeaponUnsheathed;
+
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsWeaponDrawn = false;
 };

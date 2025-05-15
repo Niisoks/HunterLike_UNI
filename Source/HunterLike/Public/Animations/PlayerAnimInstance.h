@@ -27,4 +27,7 @@ protected:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsBlocking{ false };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsDrawn{ false };
 };

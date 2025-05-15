@@ -180,3 +180,9 @@ void AMainCharacter::SetDamage(float Damage)
 	StatsComp->Stats[EStat::Strength] = Damage;
 }
 
+bool AMainCharacter::HandleSheath()
+{
+	bIsSheathed = !bIsSheathed;
+	return bIsSheathed;
+}
+

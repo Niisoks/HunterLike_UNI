@@ -45,9 +45,14 @@ void UPlayerActionsComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 void UPlayerActionsComponent::Sprint()
 {
-	if (!IPlayerRef->HasEnoughStamina(SprintCost)) { 
+	if (bIsWeaponDrawn)
+	{
+		return;
+	}
+
+	if (!IPlayerRef->HasEnoughStamina(SprintCost)) {
 		Walk();
-		return; 
+		return;
 	}
 
 	if (MovementComp->Velocity.Equals(FVector::ZeroVector, 1)) { return; }
@@ -60,6 +65,24 @@ void UPlayerActionsComponent::Sprint()
 void UPlayerActionsComponent::Walk()
 {
 	MovementComp->MaxWalkSpeed = WalkSpeed;
+}
+
+void UPlayerActionsComponent::ToggleWeaponState()
+{
+	bIsWeaponDrawn = !bIsWeaponDrawn;
+
+	if (bIsWeaponDrawn)
+	{
+		// Weapon unsheathed: reduce speed and prevent sprinting
+		MovementComp->MaxWalkSpeed = WalkSpeed * UnsheathedSpeedMultiplier;
+		OnWeaponUnsheathed.Broadcast();
+	}
+	else
+	{
+		// Weapon sheathed: normal speed and sprinting allowed
+		MovementComp->MaxWalkSpeed = WalkSpeed * SheathedSpeedMultiplier;
+		OnWeaponSheathed.Broadcast();
+	}
 }
 
 void UPlayerActionsComponent::Roll()
